@@ -8,11 +8,11 @@
 var http = require('http');
 
 
-function start(fileRoute) {
+function start(fileRoute,port) {
     function onRequest(request, response) {
         fileRoute(request, response);
     }
-    http.createServer(onRequest).listen(8888);
+    http.createServer(onRequest).listen(port);
     console.log("Server has started");
 }
 

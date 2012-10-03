@@ -8,6 +8,8 @@
 
 var server = require('./server');
 var fileRoute = require('./fileRoute');
-server.start(fileRoute.fileRoute);
+server.start(fileRoute.fileRoute,8888);
+
+//server.start(fileRoute.fileRoute,8889);
 
 
