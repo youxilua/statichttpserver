@@ -10,14 +10,14 @@ var utils = require("./utils");
 
 
 function writeFileResponse(raw, request, response, ext, statusCode) {
-    var ext = ext ? ext.slice(1) : 'unknown';
+
     var contentType = mime[ext] || "text/plain";
     var acceptEncoding = request.headers['accept-encoding'] || "";
 
     console.log("acceptEncoding-->" + acceptEncoding);
 
     var stream = raw;
-
+    response.setHeader('Context-Type',contentType);
     if (ext.match(fileExpires.fileMatch)) {
         console.log("file match");
         var expires = new Date();
@@ -45,7 +45,7 @@ function writeFileResponse(raw, request, response, ext, statusCode) {
     stream.pipe(response);
 
 
-};
+}
 
 function filePathHandle(realPath, request, response){
     function pathHandle(err, stats){
@@ -74,6 +74,7 @@ function filePathHandle(realPath, request, response){
 
             }else{
                 var ext = path.extname(realPath);
+                var raw;
                 console.log("file read" + ext);
                 if (request.headers["range"]) {
 
@@ -85,7 +86,7 @@ function filePathHandle(realPath, request, response){
 
                         response.setHeader("Content-Length", (range.end - range.start + 1));
 
-                        var raw = fs.createReadStream(realPath, {"start":range.start, "end":range.end});
+                        raw = fs.createReadStream(realPath, {"start":range.start, "end":range.end});
                         writeFileResponse(raw, request, response, ext, 206);
                         // compressHandle(raw, 206, "Partial Content");
 
@@ -100,7 +101,7 @@ function filePathHandle(realPath, request, response){
                     }
 
                 }else{
-                    var raw = fs.createReadStream(realPath);
+                    raw = fs.createReadStream(realPath);
 
                     writeFileResponse(raw, request, response, ext, 200);
                 }
